@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="MultiplayerGame Client" default="Engine" basedir="C:/MPGameClient/">
+<description>Description</description>
+
+<target name="Engine" description="Make the engine">
+   <!-- Export File for jar --> 
+   <jar jarfile="Client.jar" basedir="F:/workspace/MultiplayerGame/bin/">
+       <manifest>
+         <attribute name="Class-Path" value="lwjgl.jar lwjgl_util.jar slick.jar kryonet-2.18-all.jar"/>
+         <!-- Main Class to Run Program -->
+         <attribute name="Main-Class" value="main.client.Engine"/>
+       </manifest>
+    </jar>
+</target> 
+</project> 

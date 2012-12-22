@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="MultiplayerGame Server" default="Engine" basedir="Z:/">
+<description>Description</description>
+
+<target name="Engine" description="Make the engine">
+   <!-- Export File for jar --> 
+   <jar jarfile="server.jar" basedir="F:/workspace/MultiplayerGame/bin/">
+       <manifest>
+         <attribute name="Class-Path" value="kryonet-2.18-all.jar"/>
+         <!-- Main Class to Run Program -->
+         <attribute name="Main-Class" value="main.server.MPServer"/>
+       </manifest>
+    </jar>
+</target> 
+</project> 

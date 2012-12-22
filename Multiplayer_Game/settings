@@ -1,0 +1,3 @@
+useShaders=false
+serverIP=localhost
+fpsBenchmark=true
