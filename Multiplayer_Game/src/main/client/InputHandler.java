@@ -8,7 +8,7 @@ public class InputHandler {
 	Engine engine;
 	private static final double RUNSPEED = 0.2;
 	private static final double WALKSPEED = 0.025;
-	private static final double COOLDOWN_FIRE = 150;
+	private static final double COOLDOWN_FIRE = 500;
 	
 	
 	boolean crouch = false;

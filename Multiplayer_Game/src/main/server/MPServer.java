@@ -32,7 +32,10 @@ public class MPServer {
 	public void start() {
 		// Create objects
 
-		zombies.add(new Zombie(0,0));
+		zombies.add(new Zombie(150,150));
+		zombies.add(new Zombie(-150,-150));
+		zombies.add(new Zombie(150,-150));
+		zombies.add(new Zombie(-150,150));
 		
 		// Start server
 		
@@ -70,9 +73,7 @@ public class MPServer {
 						
 			    		server.sendToAllUDP(playerlist);
 						server.sendToAllUDP(zombies);		   
-						for(Zombie zombie : zombies) {
-							zombie.update(playerlist.players,bullets);
-						}
+
 	    				long waitTime = nextRefreshTime - System.currentTimeMillis();
 	    				if(waitTime>0) {
 	    					Thread.sleep(waitTime);
@@ -93,16 +94,15 @@ public class MPServer {
 		    		long lastUpdate=System.currentTimeMillis();
 		    		long lastUpdate2=System.currentTimeMillis();
 		    		int tickTime = 1000;
-		    		int tickTime2 = 1000/30;
-		        	while(true){ // TODO: Make a thread for this 
-//		  	    	  connection.sendUDP(mpserver.playerlist);
-//			    	  connection.sendUDP(mpserver.zombies);
+		    		int tickTime2 = 1000/30; // Proper time handling
+		        	while(true){
 		        		if(System.currentTimeMillis()>lastUpdate2+tickTime2) {
-		    				lastUpdate2=System.currentTimeMillis();
-		    				//server.sendToAllUDP(playerlist);
-		    				//server.sendToAllUDP(zombies);		   
+		    				lastUpdate2=System.currentTimeMillis();   
 		    				for(Zombie zombie : zombies) {
-		    					zombie.update(playerlist.players,bullets);
+								zombie.update(playerlist.players);
+		    				}
+		    				for(Bullet bullet : bullets) {
+		    					bullet.checkHits(playerlist.players,zombies);
 		    				}
 		    				bullets.clear();
 		    			}	

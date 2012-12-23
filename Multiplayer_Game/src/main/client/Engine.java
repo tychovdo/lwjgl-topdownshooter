@@ -157,7 +157,6 @@ public class Engine {
 						client.sendUDP(player);
 						for(Bullet bullet : bh.toSendBullets) { // TODO: replace i with well programmed Iteration
 							client.sendTCP(bullet);
-							System.out.println("[CLIENT] Sending bullet");
 							bh.toSendBullets.remove(bullet);
 							Thread.sleep(10);
 						}
@@ -308,7 +307,12 @@ public class Engine {
 		// Update objects
 		player.update(delta,map.getSolids());
 		if(shoot) { // TODO: move shoot-boolean to BulletHandler and make the bullethandler update itself.
-			bh.shoot(player.x,player.y,player.texture_num,map.getSolids());
+			bh.shoot(player.x,player.y,player.texture_num,map.getSolids(),player.player_id);
+			bh.shoot(player.x,player.y,player.texture_num,map.getSolids(),player.player_id);
+			bh.shoot(player.x,player.y,player.texture_num,map.getSolids(),player.player_id);
+			bh.shoot(player.x,player.y,player.texture_num,map.getSolids(),player.player_id);
+			bh.shoot(player.x,player.y,player.texture_num,map.getSolids(),player.player_id);
+			
 			shoot=false;
 		}
 		// Send player data to server
@@ -362,7 +366,7 @@ public class Engine {
 		
 		// Render bullets
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		bh.renderBullets();
+		bh.renderBullets(player.player_id);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 
 		
@@ -375,8 +379,10 @@ public class Engine {
 		player.render(texture_characters,shaderProgram);
 		
 		for(Zombie zombie : zombies) {
-			zombie.rendershadow(texture_characters);
-			zombie.render(texture_characters,shaderProgram);
+			if(zombie.health > 0) { // tempfix
+				zombie.rendershadow(texture_characters);
+				zombie.render(texture_characters,shaderProgram);
+			}
 		}
 		
 		// Render map

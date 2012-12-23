@@ -12,7 +12,7 @@ import objects.Bullet;
 
 public class BulletHandler {
 
-	public List<Bullet> recievedBullets = new ArrayList<Bullet>();
+	public List<Bullet> recievedBullets = new CopyOnWriteArrayList<Bullet>();
 	public List<Bullet> clientBullets = new ArrayList<Bullet>();
 	public List<Bullet> toSendBullets = new CopyOnWriteArrayList<Bullet>();
 	
@@ -21,7 +21,7 @@ public class BulletHandler {
 	}
 
 
-	public void shoot(double x, double y, int lean, List<Rectangle> solids) { // TODO: Bugfix:  mouse between center of player and gun, the bullets are going in opposite direction.
+	public void shoot(double x, double y, int lean, List<Rectangle> solids, int player_id) { // TODO: Bugfix:  mouse between center of player and gun, the bullets are going in opposite direction.
 		
 
 		// Values important for changing start position of bullet while leaning
@@ -53,15 +53,15 @@ public class BulletHandler {
 			start_y = start_y+(14*Math.sin(rotation_extra));
 		}
 
-		shoot(start_x,start_y,mouse_x,mouse_y,solids);
+		shoot(start_x,start_y,mouse_x,mouse_y,solids, player_id);
 		
 		
 	}
-public void shoot(double x, double y, double mouse_x, double mouse_y, List<Rectangle> solids) {
+public void shoot(double x, double y, double mouse_x, double mouse_y, List<Rectangle> solids, int player_id) {
 		
 		// Values for bullet
 		double bullet_range = 200;
-		int bullet_spread = 2;
+		int bullet_spread = 4;
 		
 		// Calculate bullet origin and direction
 		Random r = new Random();
@@ -92,17 +92,23 @@ public void shoot(double x, double y, double mouse_x, double mouse_y, List<Recta
 
 		
 
-//		clientBullets.add(new Bullet(x,y,shot_x,shot_y));
-//		toSendBullets.add(new Bullet(x,y,shot_x,shot_y));
-		clientBullets.add(new Bullet(x,y,mouse_x,mouse_y)); // TODO: TEMPDEBUG
-		toSendBullets.add(new Bullet(x,y,mouse_x,mouse_y));
+		clientBullets.add(new Bullet(x,y,shot_x,shot_y,player_id,20));
+		toSendBullets.add(new Bullet(x,y,shot_x,shot_y,player_id,20));
+		
 	}
-	public void renderBullets() {
+	public void renderBullets(int notToRender) {
+		
 		List<Bullet> renderBullets = new ArrayList<Bullet>(clientBullets);
 		renderBullets.addAll(recievedBullets);
-
-		for(Bullet bullet : renderBullets) {
+	
+		for(Bullet bullet : recievedBullets) {
+			if(!(bullet.player_id==notToRender)) {
+				bullet.render();
+			}
+		}
+		for(Bullet bullet : clientBullets) {
 			bullet.render();
 		}
+		
 	}
 }
