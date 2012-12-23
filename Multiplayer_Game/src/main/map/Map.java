@@ -18,7 +18,7 @@ public class Map {
 	}
 	public void update(Player player) {
 		player_chunkX = getChunkFromTile((int) player.x);
-		player_chunkX = getChunkFromTile((int) player.y);
+		player_chunkY = getChunkFromTile((int) player.y);
 		
 	}
 	public int getTileType(int x, int y) {

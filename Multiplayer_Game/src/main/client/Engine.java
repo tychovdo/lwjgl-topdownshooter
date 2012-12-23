@@ -75,6 +75,7 @@ public class Engine {
 	int dataTimer = 0;
 
 	Thread networkSender;
+	public MPServer mpserver;
 
 	
 	
@@ -105,7 +106,6 @@ public class Engine {
 		sysInfo.getDelta(); 
 		sysInfo.lastFPS = SystemInfo.getTime(); 
 		sysInfo.startTime = SystemInfo.getTime();
-		
 
 
 		// Game loop
@@ -179,7 +179,7 @@ public class Engine {
 			System.out.println("[CLIENT] Starting own server...");
 			overlay.enable("Playing local.");
 			
-			MPServer mpserver = new MPServer();
+			mpserver = new MPServer();
 			mpserver.start();
 			try {
 				client.connect(5000, settings.serverIP, 54555, 54777); //TODO: short time out of 5 seconds may cause problems in the future???
@@ -303,7 +303,7 @@ public class Engine {
 		
 		// Handle user input
 		inputHandler.getinput();
-		
+		map.update(player);
 		// Update objects
 		player.update(delta,map.getSolids());
 		if(shoot) { // TODO: move shoot-boolean to BulletHandler and make the bullethandler update itself.
@@ -356,6 +356,10 @@ public class Engine {
 	    double cam_y = player.y-(HEIGHT/2);
 		GL11.glTranslated(-cam_x, -cam_y, 0);
 
+		
+		
+		
+		
 		// Render shadows
 		for(int i =0;i<16;i++) {
 			if(players[i]!=null&&(i!=player.player_id)) { 
@@ -363,6 +367,12 @@ public class Engine {
 			}
 		}
 		player.rendershadow(texture_characters);
+	
+		// Render map
+		
+		map.render(map.player_chunkX, map.player_chunkY,texture_crate);
+		
+		
 		
 		// Render bullets
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -385,10 +395,7 @@ public class Engine {
 			}
 		}
 		
-		// Render map
-		
-		map.render(map.player_chunkX, map.player_chunkY,texture_crate);
-		
+
 		GL11.glTranslated(cam_x, cam_y, 0);
 		
 		// RENDER POST-EFFECTS

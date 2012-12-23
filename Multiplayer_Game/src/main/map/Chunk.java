@@ -23,9 +23,9 @@ public class Chunk {
 		
 		double baseX = chunkX*(64*8); // TODO: deprecated
 		double baseY = chunkY*(64*8);
-		for(int y1=0;y1<8;y1++) {
-			for(int x1=0;x1<8;x1++) {
-				if(x1==3||y1==3||x1==4||y1==4) {
+		for(int y1=2;y1<8;y1++) {
+			for(int x1=2;x1<8;x1++) {
+				if(x1==3||y1==3) {
 					tileTypes[x1][y1] = 1;
 
 					double x = baseX+(x1*64);

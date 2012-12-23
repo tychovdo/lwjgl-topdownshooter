@@ -39,6 +39,7 @@ public class InputHandler {
 		} else {
 			engine.player.texture_num=0;
 		}
+
 			
 		
 		// MOVEMENT
@@ -82,6 +83,10 @@ public class InputHandler {
 
 		// DEBUGGING
 
+		if (Keyboard.isKeyDown(Keyboard.KEY_O)) {
+			engine.mpserver.spawnZombies();
+		}
+		
 		if (Keyboard.isKeyDown(Keyboard.KEY_F1)) {
 			engine.player.teleportTo(engine.players[0]);
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_F2)) {

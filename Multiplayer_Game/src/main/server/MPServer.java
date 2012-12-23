@@ -3,6 +3,7 @@ package main.server;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import network.serialization.Register;
 
@@ -24,14 +25,23 @@ public class MPServer {
 	Playerlist playerlist = new Playerlist();
 	int respondTimer = 0;
 	
+	double lastAdd;
+	
+	
 	private int[] playerids = new int[16];
 	
-	public List<Bullet> bullets = new ArrayList<Bullet>();
+	public List<Bullet> bullets = new CopyOnWriteArrayList<Bullet>();
 	public List<Zombie> zombies = new ArrayList<Zombie>();
 	
+	boolean mustSpawn = false;
+	
+	public void spawnZombies() { // TODO : remove this stuff :)
+
+		mustSpawn=true;
+	}
 	public void start() {
 		// Create objects
-
+		System.out.println("[SERVER] Spawning zombies...");
 		zombies.add(new Zombie(150,150));
 		zombies.add(new Zombie(-150,-150));
 		zombies.add(new Zombie(150,-150));
@@ -104,7 +114,20 @@ public class MPServer {
 		    				for(Bullet bullet : bullets) {
 		    					bullet.checkHits(playerlist.players,zombies);
 		    				}
-		    				bullets.clear();
+		    				
+		    				if(mustSpawn) {
+		    					
+		    					if(System.currentTimeMillis() > lastAdd+1000) {
+		    						lastAdd = System.currentTimeMillis();
+		    						System.out.println("[SERVER] Spawning zombies...");
+			    					zombies.add(new Zombie(150,150));
+			    					zombies.add(new Zombie(-150,-150));
+			    					zombies.add(new Zombie(150,-150));
+			    					zombies.add(new Zombie(-150,150));
+		    					}
+		    					mustSpawn = false;
+		    				}
+		    				//bullets.clear();
 		    			}	
 		    			if(System.currentTimeMillis()>lastUpdate+tickTime) {
 		    				lastUpdate=System.currentTimeMillis();
