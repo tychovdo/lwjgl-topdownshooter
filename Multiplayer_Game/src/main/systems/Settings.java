@@ -8,7 +8,10 @@ public class Settings {
 	
 	public boolean useShaders = false;
 	public String serverIP = "localhost";
+	public boolean fastMode = false;
 	public boolean fpsBenchmark = false;
+
+	
 	public Settings() {
 		Properties prop = new Properties();
 		 
@@ -22,9 +25,15 @@ public class Settings {
     		if(prop.getProperty("fpsBenchmark").equals("true")) {
     			fpsBenchmark=true;
     		}
+    		prop.load(new FileInputStream("settings"));
+    		if(prop.getProperty("fastMode").equals("true")) {
+    			fastMode=true;
+    		}
     		if(prop.getProperty("serverIP")!=null) {
     			serverIP = prop.getProperty("serverIP");
     		}
+    		
+    		
 
     		
 

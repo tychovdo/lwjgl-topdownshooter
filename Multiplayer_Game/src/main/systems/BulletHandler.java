@@ -92,8 +92,8 @@ public void shoot(double x, double y, double mouse_x, double mouse_y, List<Recta
 
 		
 
-		clientBullets.add(new Bullet(x,y,shot_x,shot_y,player_id,20));
-		toSendBullets.add(new Bullet(x,y,shot_x,shot_y,player_id,20));
+		clientBullets.add(new Bullet(x,y,shot_x,shot_y,player_id,5));
+		toSendBullets.add(new Bullet(x,y,shot_x,shot_y,player_id,5));
 		
 	}
 	public void renderBullets(int notToRender) {

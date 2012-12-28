@@ -6,7 +6,7 @@ import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
 
-@SuppressWarnings("deprecation")
+
 public class Overlay {
 	TrueTypeFont font;
 	

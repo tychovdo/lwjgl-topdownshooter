@@ -58,7 +58,7 @@ public class Bullet {
 			if(!isChecked) {
 				if(circleLineIntersect((float)start_x,(float)start_y,(float)end_x,(float)end_y,(float)zombie.x,(float)zombie.y,12)) {
 					zombie.health-=damage;
-					System.out.println("[SERVER] Zombie hit");
+					zombie.havingKnockback = 2;
 					
 				}
 			}
@@ -138,7 +138,7 @@ public class Bullet {
 		
 		if(c<LIFETIME) {
 			
-			GL11.glLineWidth(1);
+			GL11.glLineWidth(0);
 			GL11.glColor4d(0.8,0.8,0.8,(double) 0.8-(c/LIFETIME));
 			if(c<50) {
 				GL11.glLineWidth(1);

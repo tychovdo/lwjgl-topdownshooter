@@ -25,10 +25,15 @@ import objects.characters.Player;
 import objects.characters.Zombie;
 
 import org.lwjgl.LWJGLException;
+import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.openal.Audio;
+import org.newdawn.slick.openal.AudioLoader;
+import org.newdawn.slick.openal.SoundStore;
 import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.util.ResourceLoader;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
@@ -58,13 +63,17 @@ public class Engine {
 	private Overlay overlay;
 
 	
-	// Textures
+	// Textures // TODO: load multiple sprites on 1 texture
 	private Texture[] texture_characters = new Texture[4];
 	
 	private Texture texture_crate;
 	private Texture texture_screeneffect;
 	private Texture texture_background;
 
+	// Sounds // TODO: Move in guns
+	Audio bulletsound_shotgun;
+	
+	
 	// Shaders
 	private int shaderProgram;
 	private int vertexShader;
@@ -80,8 +89,6 @@ public class Engine {
 	
 	
 	public Engine() {
-		// Use these two lines if you want to play singleplayer: (run a server in the client itself)
-
 		
 
 		// Set up display
@@ -96,8 +103,17 @@ public class Engine {
 		}
 
 		overlay = new Overlay();
+		
+		
+		try {
+			bulletsound_shotgun = AudioLoader.getAudio("WAV", ResourceLoader.getResourceAsStream("shotgun.wav"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		init_network(); // initialize networks
-
 		init_GL();
 		init_textures();
 		
@@ -123,10 +139,12 @@ public class Engine {
 		}
 		
 		// Exit
+		System.out.println("[CLIENT] Ending game loop, disconnecting and closing game.");
+		AL.destroy();
         glDeleteProgram(shaderProgram);
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
-		System.out.println("[CLIENT] Ending game loop, disconnecting and closing game.");
+
 		client.stop(); // Disconnect from server
 		Display.destroy(); // Destroy display
 		System.exit(0); // Kill the process
@@ -163,7 +181,7 @@ public class Engine {
 						Thread.sleep(1000/30);
 					}
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+					System.out.println("[CLIENT] ERROR: Failed to create 'networkSender' thread");
 					e.printStackTrace();
 				}
 			}
@@ -214,7 +232,7 @@ public class Engine {
 		GL11.glEnable(GL11.GL_BLEND);
 		
 		
-		GL11.glClearColor(1f, 1f, 1f,1f);
+		//GL11.glClearColor(1f, 1f, 1f,1f);
 		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 
 		GL11.glEnable( GL11.GL_LINE_SMOOTH );
@@ -223,6 +241,7 @@ public class Engine {
 		GL11.glHint( GL11.GL_POLYGON_SMOOTH_HINT, GL11.GL_NICEST );
 		
 		if(settings.useShaders) {
+			System.out.print("[CLIENT] Loading shaders");
 			init_shaders(); // TODO: use shaders (also with textures)
 		}
 	}
@@ -312,12 +331,12 @@ public class Engine {
 			bh.shoot(player.x,player.y,player.texture_num,map.getSolids(),player.player_id);
 			bh.shoot(player.x,player.y,player.texture_num,map.getSolids(),player.player_id);
 			bh.shoot(player.x,player.y,player.texture_num,map.getSolids(),player.player_id);
-			
+			bulletsound_shotgun.playAsSoundEffect(1.0f, 0.3f, false);
 			shoot=false;
 		}
 		// Send player data to server
 		
-
+		SoundStore.get().poll(0);
 		
 
 	}
@@ -327,8 +346,9 @@ public class Engine {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 //
 		// Render background
+		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		texture_background.bind();
+		//texture_background.bind();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D,texture_background.getTextureID());
 		for(int y1=-1;y1<2;y1++) {
@@ -348,7 +368,7 @@ public class Engine {
 			}
 		}
 
-//
+		
 		// RENDER OBJECTS
 		
 		// Focus camera around player
@@ -376,8 +396,10 @@ public class Engine {
 		
 		// Render bullets
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GL11.glDisable(GL11.GL_BLEND);
 		bh.renderBullets(player.player_id);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glEnable(GL11.GL_BLEND);
 
 		
 		// Render characters
@@ -400,27 +422,29 @@ public class Engine {
 		
 		// RENDER POST-EFFECTS
 		
-		// Render screeneffect
+		if(!settings.fastMode) {
+			// Render screeneffect
+			
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			
+			texture_screeneffect.bind();
+			GL11.glBegin(GL11.GL_QUADS);
+				GL11.glTexCoord2f(0, 1);
+				GL11.glVertex2d(0,0); // Bottom-left
+				GL11.glTexCoord2f(1, 1);
+				GL11.glVertex2d(960, 0); // Bottom-right
+				GL11.glTexCoord2f(1, 0);
+				GL11. glVertex2d(960,512); // Upper-right
+				GL11.glTexCoord2f(0, 0);
+				GL11.glVertex2d(0, 512); // Upper-left
+			GL11.glEnd();
+			
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
 
 
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		
-		texture_screeneffect.bind();
-		GL11.glBegin(GL11.GL_QUADS);
-			GL11.glTexCoord2f(0, 1);
-			GL11.glVertex2d(0,0); // Bottom-left
-			GL11.glTexCoord2f(1, 1);
-			GL11.glVertex2d(960, 0); // Bottom-right
-			GL11.glTexCoord2f(1, 0);
-			GL11. glVertex2d(960,512); // Upper-right
-			GL11.glTexCoord2f(0, 0);
-			GL11.glVertex2d(0, 512); // Upper-left
-		GL11.glEnd();
-		
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-
-		// Render overlay (text)
+			// Render overlay (text)
 		overlay.render();
+		}
 	}
 	public static void main(String[] argv) {
 		new Engine();

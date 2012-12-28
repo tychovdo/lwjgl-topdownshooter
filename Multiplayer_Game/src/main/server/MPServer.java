@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import main.map.Map;
 import network.serialization.Register;
 
 
@@ -34,6 +35,8 @@ public class MPServer {
 	public List<Zombie> zombies = new ArrayList<Zombie>();
 	
 	boolean mustSpawn = false;
+	
+	private Map map = new Map();
 	
 	public void spawnZombies() { // TODO : remove this stuff :)
 
@@ -103,18 +106,22 @@ public class MPServer {
 		        public void run(){
 		    		long lastUpdate=System.currentTimeMillis();
 		    		long lastUpdate2=System.currentTimeMillis();
-		    		int tickTime = 1000;
+		    		int tickTime = 500;
 		    		int tickTime2 = 1000/30; // Proper time handling
 		        	while(true){
 		        		if(System.currentTimeMillis()>lastUpdate2+tickTime2) {
 		    				lastUpdate2=System.currentTimeMillis();   
 		    				for(Zombie zombie : zombies) {
-								zombie.update(playerlist.players);
+								zombie.update(playerlist.players,map.getSolids());
 		    				}
 		    				for(Bullet bullet : bullets) {
 		    					bullet.checkHits(playerlist.players,zombies);
 		    				}
-		    				
+		    				for(int i=0;i<playerlist.players.length;i++) {
+		    					if(playerlist.players[i]!=null) {
+		    						map.update(playerlist.players[i]);
+		    					}
+		    				}
 		    				if(mustSpawn) {
 		    					
 		    					if(System.currentTimeMillis() > lastAdd+1000) {

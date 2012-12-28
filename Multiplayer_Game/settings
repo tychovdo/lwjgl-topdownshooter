@@ -1,3 +1,4 @@
 useShaders=false
 serverIP=localhost
 fpsBenchmark=true
+fastMode=false
