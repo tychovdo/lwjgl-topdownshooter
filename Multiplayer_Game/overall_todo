@@ -2,3 +2,5 @@ multiple weapons (load them from xml file)
 reload weapons
 blood (animations)
 sound
+better collision detection: instead of isIntersecting(nextPos with boxes),
+							it should be: isIntersecting(line(currentPos->nextPos with boxes)

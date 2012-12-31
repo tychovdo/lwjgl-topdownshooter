@@ -72,7 +72,7 @@ public class Engine {
 
 	// Sounds // TODO: Move in guns
 	Audio bulletsound_shotgun;
-	
+	Audio music_background;
 	
 	// Shaders
 	private int shaderProgram;
@@ -107,11 +107,13 @@ public class Engine {
 		
 		try {
 			bulletsound_shotgun = AudioLoader.getAudio("WAV", ResourceLoader.getResourceAsStream("shotgun.wav"));
+			music_background = AudioLoader.getAudio("WAV", ResourceLoader.getResourceAsStream("theme2.wav"));
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		music_background.playAsMusic(1.0f,1.0f, true);
 		
 		init_network(); // initialize networks
 		init_GL();
@@ -331,7 +333,7 @@ public class Engine {
 			bh.shoot(player.x,player.y,player.texture_num,map.getSolids(),player.player_id);
 			bh.shoot(player.x,player.y,player.texture_num,map.getSolids(),player.player_id);
 			bh.shoot(player.x,player.y,player.texture_num,map.getSolids(),player.player_id);
-			bulletsound_shotgun.playAsSoundEffect(1.0f, 0.3f, false);
+			bulletsound_shotgun.playAsSoundEffect(1.0f, 0.2f, false);
 			shoot=false;
 		}
 		// Send player data to server
